@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./config:/etc/holland/backupsets:ro
-      - ./data:/var/spool/holland
+      - ./data:/var/lib/holland
 ```
 
 ### Environment Variables
@@ -59,7 +59,12 @@ For example, for a MySQL database, you might have a file named `server1.example.
 ```txt
 # server1.example.com.conf
 [holland:backup]
+auto-purge-failures = yes
+backups-to-keep = 7
+estimated-size-factor = 0.6
+purge-policy = after-backup
 plugin = mysqldump
+relative-symlinks = yes
 
 [mysql:client]
 host = server1.example.com-db
@@ -72,7 +77,12 @@ And for a PostgreSQL database, a file named `server2.example.com.conf` could loo
 
 ```txt
 [holland:backup]
+auto-purge-failures = yes
+backups-to-keep = 7
+estimated-size-factor = 0.6
+purge-policy = after-backup
 plugin = pgdump
+relative-symlinks = yes
 
 [pgauth]
 hostname = server2.example.com-db
