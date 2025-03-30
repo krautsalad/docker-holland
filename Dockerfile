@@ -1,8 +1,8 @@
 FROM alpine
 
 RUN apk update && \
+    apk add --no-cache busybox-suid postgresql-client mysql-client python3 py3-pip tzdata && \
     apk add --no-cache --virtual .build-deps build-base git postgresql-dev python3-dev && \
-    apk add --no-cache busybox-suid postgresql-client mysql-client python3 py3-pip && \
     git clone https://github.com/holland-backup/holland.git /holland && \
     cd /holland && \
     git submodule update --init --recursive && \
@@ -12,12 +12,12 @@ RUN apk update && \
     cd ../holland.backup.mysqldump && python3 setup.py install && \
     cd ../holland.backup.pgdump && python3 setup.py install && \
     apk del .build-deps && \
-    rm -rf /etc/holland /holland /root/.cache /tmp/* /var/cache/apk/* /var/tmp/* /usr/lib/python*/ensurepip
+    rm -rf /etc/holland /holland /root/.cache /tmp/* /usr/lib/python*/ensurepip /var/cache/apk/* /var/tmp/*
 
 RUN rm -rf /var/spool/cron/crontabs && \
     mkdir -p /var/spool/cron/crontabs && \
     cat <<EOF > /var/spool/cron/crontabs/root
-0 1 * * * /usr/bin/holland backup >> /var/log/cron/cron.log 2>&1
+0 0 * * * /usr/bin/holland backup >> /var/log/cron/cron.log 2>&1
 EOF
 
 ENV PATH=$PATH:/usr/libexec/postgresql
