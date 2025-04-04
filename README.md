@@ -2,7 +2,7 @@
 
 Cron-Managed Holland Database Backup.
 
-**docker-holland** is an Alpine-based Docker container that periodically runs the [Holland backup program](https://hollandbackup.org/) using cron. It provides an easy way to automate database backups with Holland and is preconfigured for both `mysqldump` and `pgdump`.
+**docker-holland** is an Alpine-based Docker container that periodically runs the [Holland backup program](https://hollandbackup.org/) using cron. It provides an easy way to automate database backups with Holland and is preconfigured for `mongodump`, `mysqldump` and `pgdump`.
 
 ## Configuration
 
@@ -16,7 +16,8 @@ services:
     environment:
       BACKUPSETS: >-
         server1.example.com,
-        server2.example.com
+        server2.example.com,
+        server3.example.com
       SCHEDULE: 0 3 * * *
       TZ: Europe/Berlin
     image: krautsalad/holland
@@ -54,7 +55,23 @@ services:
 
 Place your individual backupset configuration files in the `./config` directory. All files must have the `.conf` extension.
 
-For example, for a MySQL database, you might have a file named `server1.example.com.conf`:
+For example, for a MongoDB database, you might have a file named `server1.example.com.conf`:
+
+```txt
+# server1.example.com.conf
+[holland:backup]
+auto-purge-failures = yes
+backups-to-keep = 7
+estimated-size-factor = 0.6
+purge-policy = after-backup
+plugin = mongodump
+relative-symlinks = yes
+
+[mongodump]
+uri = mongodb://root:VerySecurePassword@server1.example.com-db:27027
+```
+
+And for a MySQL database, a file named `server2.example.com.conf` could look like this:
 
 ```txt
 # server1.example.com.conf
@@ -67,13 +84,13 @@ plugin = mysqldump
 relative-symlinks = yes
 
 [mysql:client]
-host = server1.example.com-db
+host = server2.example.com-db
 password = VerySecurePassword
 port = 3306
 user = root
 ```
 
-And for a PostgreSQL database, a file named `server2.example.com.conf` could look like this:
+And for a PostgreSQL database, a file named `server3.example.com.conf` could look like this:
 
 ```txt
 [holland:backup]
@@ -85,7 +102,7 @@ plugin = pgdump
 relative-symlinks = yes
 
 [pgauth]
-hostname = server2.example.com-db
+hostname = server3.example.com-db
 password = VerySecurePassword
 port = 5432
 username = postgres

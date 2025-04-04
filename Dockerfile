@@ -1,7 +1,7 @@
 FROM alpine
 
 RUN apk update && \
-    apk add --no-cache busybox-suid postgresql-client mysql-client python3 py3-pip tzdata && \
+    apk add --no-cache busybox-suid mongodb-tools mysql-client postgresql-client python3 py3-mongo py3-pip tzdata && \
     apk add --no-cache --virtual .build-deps build-base git postgresql-dev python3-dev && \
     git clone https://github.com/holland-backup/holland.git /holland && \
     cd /holland && \
@@ -9,6 +9,7 @@ RUN apk update && \
     python3 setup.py install && \
     cd plugins/holland.lib.common && python3 setup.py install && \
     cd ../holland.lib.mysql && python3 setup.py install && \
+    cd ../holland.backup.mongodump && python3 setup.py install && \
     cd ../holland.backup.mysqldump && python3 setup.py install && \
     cd ../holland.backup.pgdump && python3 setup.py install && \
     apk del .build-deps && \
