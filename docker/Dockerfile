@@ -25,7 +25,7 @@ ENV PATH=$PATH:/usr/libexec/postgresql
 RUN echo 'export "PATH=$PATH:/usr/libexec/postgresql"' >> /etc/profile
 
 COPY holland /etc/holland
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["crond", "-f"]
