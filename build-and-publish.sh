@@ -1,7 +1,7 @@
 #!/bin/sh
 set -ex
 
-docker build --no-cache --progress=plain -t krautsalad/holland:latest -f docker/Dockerfile .
+docker build --no-cache --platform linux/amd64 --progress=plain -t krautsalad/holland:latest -f docker/Dockerfile .
 docker push krautsalad/holland:latest
 
 VERSION=$(git describe --tags "$(git rev-list --tags --max-count=1)")
