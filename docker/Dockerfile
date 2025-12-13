@@ -6,12 +6,12 @@ RUN apk update && \
     git clone https://github.com/holland-backup/holland.git /holland && \
     cd /holland && \
     git submodule update --init --recursive && \
-    python3 setup.py install && \
-    cd plugins/holland.lib.common && python3 setup.py install && \
-    cd ../holland.lib.mysql && python3 setup.py install && \
-    cd ../holland.backup.mongodump && python3 setup.py install && \
-    cd ../holland.backup.mysqldump && python3 setup.py install && \
-    cd ../holland.backup.pgdump && python3 setup.py install && \
+    pip install --break-system-packages --no-cache-dir --root-user-action ignore . && \
+    cd plugins/holland.lib.common && pip install --break-system-packages --no-cache-dir --root-user-action ignore . && \
+    cd ../holland.lib.mysql && pip install --break-system-packages --no-cache-dir --root-user-action ignore . && \
+    cd ../holland.backup.mongodump && pip install --break-system-packages --no-cache-dir --root-user-action ignore . && \
+    cd ../holland.backup.mysqldump && pip install --break-system-packages --no-cache-dir --root-user-action ignore . && \
+    cd ../holland.backup.pgdump && pip install --break-system-packages --no-cache-dir --root-user-action ignore . && \
     apk del .build-deps && \
     rm -rf /etc/holland /holland /root/.cache /tmp/* /usr/lib/python*/ensurepip /var/cache/apk/* /var/tmp/*
 
