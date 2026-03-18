@@ -1,4 +1,4 @@
-FROM alpine:3.23
+FROM alpine
 
 RUN apk update && \
     apk add --no-cache busybox-suid mongodb-tools mysql-client postgresql-client python3 py3-mongo py3-pip tzdata && \

@@ -1,10 +1,26 @@
 #!/bin/sh
 set -ex
 
-docker build --no-cache --platform linux/amd64 --progress=plain -t krautsalad/holland:latest -f docker/Dockerfile .
-docker push krautsalad/holland:latest
-
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 VERSION=$(git describe --tags "$(git rev-list --tags --max-count=1)")
 
-docker tag krautsalad/holland:latest krautsalad/holland:${VERSION}
-docker push krautsalad/holland:${VERSION}
+BUILD_CONTEXT="${SCRIPT_DIR}/"
+
+docker buildx build \
+--no-cache \
+--platform linux/amd64,linux/arm64 \
+--progress=plain \
+-f "${SCRIPT_DIR}/docker/Dockerfile" \
+-t krautsalad/holland:latest \
+-t krautsalad/holland:${VERSION} \
+"${BUILD_CONTEXT}"
+
+until docker buildx build \
+    --platform linux/amd64,linux/arm64 \
+    --push \
+    -f "${SCRIPT_DIR}/docker/Dockerfile" \
+    -t krautsalad/holland:latest \
+    -t krautsalad/holland:${VERSION} \
+    "${BUILD_CONTEXT}"; do
+    echo "Retrying push for krautsalad/holland…" ; sleep 2
+done
